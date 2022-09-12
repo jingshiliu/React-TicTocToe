@@ -1,0 +1,16 @@
+#tictoctoe{
+    text-align: center;
+}
+
+#gameBoard{
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    justify-content: center
+}
+
+.cell{
+    border: 1px solid grey;
+    width: 100px;
+    height: 100px;
+    display: inline-block;
+}
