@@ -89,7 +89,7 @@ function TicTocToe() {
       <div id="gameBoard">
         {
           board.map((cell, index) =>
-            <Cell state={cell} cellId={index} key={index} tictoctoe={{ getTurn, changeTurn, winningMessage, checkWinner, updateBoard }} />
+            <Cell state={cell} cellId={index} key={index} tictoctoe={{winningMessage, updateBoard}} />
           )
         }
       </div>
