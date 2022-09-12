@@ -13,3 +13,8 @@ This project is a TicTocToe game in React.
 ## Run the project at localhost:3000
 
 `npm start`
+
+
+## Project Screenshot
+
+![Alt text](./project-screenshot.png)
