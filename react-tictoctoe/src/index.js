@@ -4,28 +4,34 @@ import "./style.css"
 
 
 function Cell({ state, cellId, tictoctoe }) {
-  const [cellState, setCellState] = useState(state)
-
   return (
     <div className="cell" onClick={ e => {
-      if (cellState === '' && tictoctoe.winningMessage === '') {
-        let tempCellState = tictoctoe.getTurn()
-        setCellState(tempCellState)
-        tictoctoe.changeTurn()
-        tictoctoe.updateBoard(cellId, tempCellState)
-        tictoctoe.checkWinner(cellId, tempCellState)
+      if (state === '' && tictoctoe.winningMessage === '') {
+        tictoctoe.updateBoard(cellId)
       }
     }}>
-      {cellState}
+      {state}
     </div>
   )
 }
 
 function TicTocToe() {
   const [turn, setTurn] = useState('x');
-  const [board, setBoard] = useState(Array(9).fill(''));
   const [winningMessage, setWinningMessage] = useState('');
+  const [board, setBoard ]= useState(Array(9).fill(''));
+  const [scoreHistory, setScoreHistory] = useState([0, 0])
 
+  const restartGame = ()=>{
+    setBoard(Array(9).fill(''))
+    setWinningMessage('')
+  }
+
+  const updateScore = ()=>{
+    if(getTurn() === 'o')
+      setScoreHistory([scoreHistory[0], scoreHistory[1]+1])
+    else
+      setScoreHistory([scoreHistory[0]+1, scoreHistory[1]])
+  }
   const changeTurn = () => {
     if (turn === 'o')
       setTurn('x')
@@ -36,16 +42,16 @@ function TicTocToe() {
     return turn
   }
 
-  const updateBoard = (cellId, cellState)=>{
-    let tempBoard = [...board]
-    tempBoard[cellId] = cellState
-    setBoard(tempBoard)
-    console.log(tempBoard)
-    return tempBoard
+  const updateBoard = (cellId)=>{
+    let updatedBoard = [...board]
+    updatedBoard[cellId] = getTurn()
+    changeTurn()
+    setBoard(updatedBoard)
+
+    checkWinner(cellId, updatedBoard)
   }
 
-  const checkWinner = (cellId, cellState) => {
-    console.log(1)
+  const checkWinner = (cellId, updatedBoard) => {
     const combinations = {
       horizontal: [
         [0, 1, 2],
@@ -62,38 +68,24 @@ function TicTocToe() {
         [2, 4, 6]
       ]
     }
-    console.log(board)
-    for (let index of combinations.horizontal.at([Math.floor[cellId / 3]])){
-      if (board[index] !== cellState)
-        return false
-    }
-      
-
-    for (let index of combinations.vertical.at([cellId % 3]))
-      if (board[index] !== cellState)
-        return false
-
-    if (cellId % 2 === 0) {
-      if (cellId in combinations.diagonal.at(0))
-        for (let index of combinations.diagonal.at(0)) {
-          if (board[index] !== cellState)
-            return false
+    for(let combination in combinations){
+      for(let row of combinations[combination]){
+        if(row.includes(cellId)){
+          if(updatedBoard[row[0]] === updatedBoard[row[1]] && updatedBoard[row[1]] === updatedBoard[row[2]]){
+            setWinningMessage(`${updatedBoard[row[0]]} wins the game`)
+            updateScore()
+            break;
+          }
         }
-      if (cellId in combinations.diagonal.at(1))
-        for (let index of combinations.diagonal.at(1)) {
-          if (board[index] !== cellState)
-            return false
-        }
+      }
     }
-
-    // work on this function
-    setWinningMessage(`${cellState} wins the game`)
   }
 
   return (
     <div id="tictoctoe">
       <h1>Tic Toc Toe</h1>
-      <h2>{winningMessage}</h2>
+      <h3>X   vs    O  </h3>
+      <h3>{scoreHistory[0]} vs {scoreHistory[1]}</h3>
       <div id="gameBoard">
         {
           board.map((cell, index) =>
@@ -101,7 +93,8 @@ function TicTocToe() {
           )
         }
       </div>
-
+      <button onClick={restartGame}>New Game</button>
+      <h2>{winningMessage}</h2>
     </div>
   )
 }
